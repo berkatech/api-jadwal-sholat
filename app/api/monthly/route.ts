@@ -12,11 +12,21 @@ export async function GET(request: NextRequest) {
             year: searchParams.get("year")
         });
 
-        const schedule = [];
+        const schedules: Array<{
+            date: string;
+            imsyak: string;
+            shubuh: string;
+            sunrise: string;
+            dhuha: string;
+            dzuhur: string;
+            ashr: string;
+            maghrib: string;
+            isya: string;
+        }> = [];
 
         for (const date in kemenagResponse.data) {
             const row = kemenagResponse.data[date];
-            schedule.push({
+            schedules.push({
                 date: date,
                 imsyak: row.imsak,
                 shubuh: row.subuh,
@@ -34,7 +44,7 @@ export async function GET(request: NextRequest) {
             data: {
                 province: kemenagResponse.prov,
                 city: kemenagResponse.kabko,
-                schedule: schedule,
+                schedules: schedules,
             }
         };
         return Response.json(resp);
