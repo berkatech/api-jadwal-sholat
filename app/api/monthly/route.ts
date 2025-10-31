@@ -20,10 +20,10 @@ export async function GET(request: NextRequest) {
 
     try {
         const kemenagResponse = await getSchedules({
-            province_id: searchParams.get("province_id"),
-            city_id: searchParams.get("city_id"),
-            month: searchParams.get("month"),
-            year: searchParams.get("year")
+            province_id: province_id,
+            city_id: city_id,
+            month: month,
+            year: year
         });
 
         const schedules: Array<{
