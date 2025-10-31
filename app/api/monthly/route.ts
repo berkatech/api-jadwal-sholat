@@ -38,8 +38,20 @@ export async function GET(request: NextRequest) {
             isya: string;
         }> = [];
 
+        // validate response structure
+        if (!kemenagResponse.data || typeof kemenagResponse.data !== 'object') {
+            return Response.json({
+                message: "error",
+                error: "invalid response structure from external API"
+            }, {
+                status: 502,
+            });
+        }
+
         for (const date in kemenagResponse.data) {
             const row = kemenagResponse.data[date];
+            if (!row) continue;
+
             schedules.push({
                 date: date,
                 imsyak: row.imsak,
