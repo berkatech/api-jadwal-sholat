@@ -1,73 +1,85 @@
-import got from 'got';
-import { JSDOM } from 'jsdom';
+import { getSchedules } from '@/app/lib/adapter/bimaskemenag';
 import { NextRequest } from 'next/server';
 
-interface KemenagScheduleResponse {
-    data: {
-        [date: string]: {
-            tanggal: string,
-            ashar: string,
-            dhuha: string,
-            dzuhur: string,
-            imsak: string,
-            isya: string,
-            maghrib: string,
-            subuh: string,
-            terbit: string,
-        }
-    }
-    prov: string,
-    kabko: string,
-}
-
 export async function GET(request: NextRequest) {
-    // get cookies
-    const page = await got.get('https://bimasislam.kemenag.go.id/web/jadwalshalat');
-    const cookies = page.headers['set-cookie'] || [];
-    console.log(cookies);
-
     const { searchParams } = request.nextUrl;
 
-    // get schedule
-    const kemenagRequest = got.post('https://bimasislam.kemenag.go.id/web/ajax/getShalatbln', {
-        form: {
-            x: searchParams.get("province_id"),
-            y: searchParams.get("city_id"),
-            bln: searchParams.get("month"),
-            thn: searchParams.get("year"),
-        },
-        headers: {
-            'Cookie': cookies
-        }
-    });
+    const province_id = searchParams.get("province_id");
+    const city_id = searchParams.get("city_id");
+    const month = searchParams.get("month");
+    const year = searchParams.get("year");
 
-    const kemenagResponse: KemenagScheduleResponse = await kemenagRequest.json();
-
-    const schedule = [];
-
-    for (const date in kemenagResponse.data) {
-        const row = kemenagResponse.data[date];
-        schedule.push({
-            date: date,
-            imsyak: row.imsak,
-            shubuh: row.subuh,
-            sunrise: row.terbit,
-            dhuha: row.dhuha,
-            dzuhur: row.dzuhur,
-            ashr: row.ashar,
-            maghrib: row.maghrib,
-            isya: row.isya,
-        })
+    if (!province_id || !city_id || !month || !year) {
+        return Response.json({
+            message: "error",
+            error: "missing required parameters"
+        }, {
+            status: 400
+        });
     }
 
-    const resp = {
-        message: "success",
-        data: {
-            province: kemenagResponse.prov,
-            city: kemenagResponse.kabko,
-            schedule: schedule,
-        }
-    };
+    try {
+        const kemenagResponse = await getSchedules({
+            province_id: province_id,
+            city_id: city_id,
+            month: month,
+            year: year
+        });
 
-    return Response.json(resp);
+        const schedules: Array<{
+            date: string;
+            imsyak: string;
+            shubuh: string;
+            sunrise: string;
+            dhuha: string;
+            dzuhur: string;
+            ashr: string;
+            maghrib: string;
+            isya: string;
+        }> = [];
+
+        // validate response structure
+        if (!kemenagResponse.data || typeof kemenagResponse.data !== 'object') {
+            return Response.json({
+                message: "error",
+                error: "invalid response structure from external API"
+            }, {
+                status: 502,
+            });
+        }
+
+        for (const date in kemenagResponse.data) {
+            const row = kemenagResponse.data[date];
+            if (!row) continue;
+
+            schedules.push({
+                date: date,
+                imsyak: row.imsak,
+                shubuh: row.subuh,
+                sunrise: row.terbit,
+                dhuha: row.dhuha,
+                dzuhur: row.dzuhur,
+                ashr: row.ashar,
+                maghrib: row.maghrib,
+                isya: row.isya,
+            })
+        }
+
+        const resp = {
+            message: "success",
+            data: {
+                province: kemenagResponse.prov,
+                city: kemenagResponse.kabko,
+                schedules: schedules,
+            }
+        };
+        return Response.json(resp);
+    } catch (error) {
+        return Response.json({
+            message: "error",
+            error: error instanceof Error ? error.message : "failed to fetch schedules",
+        }, {
+            status: 500,
+        });
+    }
 }
