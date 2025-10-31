@@ -39,10 +39,6 @@ interface getScheduleResponse {
 }
 
 export const getSchedules = async (params: getScheduleParams) => {
-    if (!params.province_id || !params.city_id || !params.month || !params.year) {
-        throw new Error('Missing required parameters');
-    }
-
     const cookies = await getCookies();
 
     // get schedule

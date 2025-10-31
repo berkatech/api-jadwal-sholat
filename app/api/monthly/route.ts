@@ -4,6 +4,20 @@ import { NextRequest } from 'next/server';
 export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl;
 
+    const province_id = searchParams.get("province_id");
+    const city_id = searchParams.get("city_id");
+    const month = searchParams.get("month");
+    const year = searchParams.get("year");
+
+    if (!province_id || !city_id || !month || !year) {
+        return Response.json({
+            message: "error",
+            error: "missing required parameters"
+        }, {
+            status: 400
+        });
+    }
+
     try {
         const kemenagResponse = await getSchedules({
             province_id: searchParams.get("province_id"),
