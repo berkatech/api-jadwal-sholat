@@ -1,47 +1,15 @@
-import got from 'got';
-import { JSDOM } from 'jsdom';
+import { getSchedules } from '@/app/lib/adapter/bimaskemenag';
 import { NextRequest } from 'next/server';
 
-interface KemenagScheduleResponse {
-    data: {
-        [date: string]: {
-            tanggal: string,
-            ashar: string,
-            dhuha: string,
-            dzuhur: string,
-            imsak: string,
-            isya: string,
-            maghrib: string,
-            subuh: string,
-            terbit: string,
-        }
-    }
-    prov: string,
-    kabko: string,
-}
-
 export async function GET(request: NextRequest) {
-    // get cookies
-    const page = await got.get('https://bimasislam.kemenag.go.id/web/jadwalshalat');
-    const cookies = page.headers['set-cookie'] || [];
-    console.log(cookies);
-
     const { searchParams } = request.nextUrl;
 
-    // get schedule
-    const kemenagRequest = got.post('https://bimasislam.kemenag.go.id/web/ajax/getShalatbln', {
-        form: {
-            x: searchParams.get("province_id"),
-            y: searchParams.get("city_id"),
-            bln: searchParams.get("month"),
-            thn: searchParams.get("year"),
-        },
-        headers: {
-            'Cookie': cookies
-        }
+    const kemenagResponse = await getSchedules({
+        province_id: searchParams.get("province_id"),
+        city_id: searchParams.get("city_id"),
+        month: searchParams.get("month"),
+        year: searchParams.get("year")
     });
-
-    const kemenagResponse: KemenagScheduleResponse = await kemenagRequest.json();
 
     const schedule = [];
 
