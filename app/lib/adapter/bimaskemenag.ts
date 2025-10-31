@@ -1,7 +1,14 @@
 import got from "got";
 
 export const getCookies = async () => {
-    const page = await got.get('https://bimasislam.kemenag.go.id');
+    const page = await got.get('https://bimasislam.kemenag.go.id', {
+        timeout: {
+            request: 7000,
+        },
+        retry: {
+            limit: 2
+        }
+    });
     const cookies = page.headers['set-cookie'] || [];
     return cookies;
 }
@@ -44,6 +51,12 @@ export const getSchedules = async (params: getScheduleParams) => {
         },
         headers: {
             'Cookie': cookies
+        },
+        timeout: {
+            request: 10000,
+        },
+        retry: {
+            limit: 2
         }
     }).json();
 
