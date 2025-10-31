@@ -10,7 +10,7 @@ export const getCookies = async () => {
         }
     });
     const cookies = page.headers['set-cookie'] || [];
-    return cookies;
+    return cookies.join("; ");
 }
 
 interface getScheduleParams {
