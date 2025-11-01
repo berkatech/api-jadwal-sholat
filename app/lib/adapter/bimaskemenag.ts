@@ -70,6 +70,12 @@ export const getProvinces = async () => {
     const page = await got.get('https://bimasislam.kemenag.go.id/web/jadwalshalat', {
         headers: {
             'Cookie': cookies
+        },
+        timeout: {
+            request: 5000
+        },
+        retry: {
+            limit: 2
         }
     });
 
