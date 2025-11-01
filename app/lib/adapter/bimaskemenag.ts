@@ -1,17 +1,25 @@
 import got from "got";
 import { JSDOM } from 'jsdom';
 
+var cookieCache: { cookies: string, timestamp: number } | null = null;
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
 export const getCookies = async () => {
+    const now = Date.now();
+
+    if (cookieCache != null && (now - cookieCache.timestamp) < CACHE_TTL) {
+        return cookieCache.cookies;
+    }
+
     const page = await got.get('https://bimasislam.kemenag.go.id', {
-        timeout: {
-            request: 7000,
-        },
-        retry: {
-            limit: 2
-        }
+        timeout: { request: 7000 },
+        retry: { limit: 2 }
     });
+
     const cookies = page.headers['set-cookie'] || [];
-    return cookies.join("; ");
+    const cookiesStr = cookies.join("; ");
+    cookieCache = { cookies: cookiesStr, timestamp: now };
+    return cookiesStr;
 }
 
 interface getScheduleParams {
