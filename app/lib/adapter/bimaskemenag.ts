@@ -81,7 +81,11 @@ export const getProvinces = async () => {
 
     const dom = new JSDOM(page.body).window;
 
-    const selectorTag = dom.document.getElementById('search_prov')!;
+    const selectorTag = dom.document.getElementById('search_prov');
+    if (!selectorTag) {
+        throw new Error('province selector element not found');
+    }
+
     const provinceTags = selectorTag.querySelectorAll('option');
 
     const provinces: Array<{

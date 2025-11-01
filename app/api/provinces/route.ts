@@ -12,8 +12,8 @@ export async function GET() {
         console.error('Failed to fetch provinces:', error);
         return Response.json(
             {
-                message: "Failed to fetch provinces",
-                error: error instanceof Error ? error.message : 'Unknown error'
+                message: "error",
+                error: error instanceof Error ? error.message : 'failed to fetch provinces'
             },
             { status: 500 }
         );
