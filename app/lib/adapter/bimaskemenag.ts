@@ -81,29 +81,32 @@ export const getProvinces = async () => {
 
     const dom = new JSDOM(page.body).window;
 
-    const selectorTag = dom.document.getElementById('search_prov');
-    if (!selectorTag) {
-        throw new Error('province selector element not found');
+    try {
+        const selectorTag = dom.document.getElementById('search_prov');
+        if (!selectorTag) {
+            throw new Error('province selector element not found');
+        }
+
+        const provinceTags = selectorTag.querySelectorAll('option');
+
+        const provinces: Array<{
+            id: string,
+            name: string
+        }> = [];
+
+        for (let i = 0; i < provinceTags.length; i++) {
+            const element = provinceTags[i];
+
+            if (!element.value) continue;
+
+            provinces.push({
+                id: element.value,
+                name: element.text,
+            });
+        }
+
+        return provinces;
+    } finally {
+        dom.close();
     }
-
-    const provinceTags = selectorTag.querySelectorAll('option');
-
-    const provinces: Array<{
-        id: string,
-        name: string
-    }> = [];
-
-    for (let i = 0; i < provinceTags.length; i++) {
-        const element = provinceTags[i];
-
-        if (!element.value) continue;
-
-        provinces.push({
-            id: element.value,
-            name: element.text,
-        });
-    }
-
-    return provinces;
-
 }
