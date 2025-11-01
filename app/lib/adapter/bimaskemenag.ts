@@ -1,4 +1,5 @@
 import got from "got";
+import { JSDOM } from 'jsdom';
 
 export const getCookies = async () => {
     const page = await got.get('https://bimasislam.kemenag.go.id', {
@@ -61,4 +62,38 @@ export const getSchedules = async (params: getScheduleParams) => {
     }).json();
 
     return schedules;
+}
+
+export const getProvinces = async () => {
+    const cookies = await getCookies();
+
+    const page = await got.get('https://bimasislam.kemenag.go.id/web/jadwalshalat', {
+        headers: {
+            'Cookie': cookies
+        }
+    });
+
+    const dom = new JSDOM(page.body).window;
+
+    const selectorTag = dom.document.getElementById('search_prov')!;
+    const provinceTags = selectorTag.querySelectorAll('option');
+
+    const provinces: Array<{
+        id: string,
+        name: string
+    }> = [];
+
+    for (let i = 0; i < provinceTags.length; i++) {
+        const element = provinceTags[i];
+
+        if (!element.value) continue;
+
+        provinces.push({
+            id: element.value,
+            name: element.text,
+        });
+    }
+
+    return provinces;
+
 }
