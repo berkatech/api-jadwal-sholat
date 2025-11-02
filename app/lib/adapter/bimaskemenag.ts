@@ -1,17 +1,39 @@
 import got from "got";
 import { JSDOM } from 'jsdom';
 
+let cookieCache: { cookies: string, timestamp: number } | null = null;
+let pendingCookieRequest: Promise<string> | null = null;
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
 export const getCookies = async () => {
-    const page = await got.get('https://bimasislam.kemenag.go.id', {
-        timeout: {
-            request: 7000,
-        },
-        retry: {
-            limit: 2
+    const now = Date.now();
+
+    if (cookieCache !== null && (now - cookieCache.timestamp) < CACHE_TTL) {
+        return cookieCache.cookies;
+    }
+
+    // Deduplicate concurrent requests
+    if (pendingCookieRequest !== null) {
+        return await pendingCookieRequest;
+    }
+
+    pendingCookieRequest = (async () => {
+        try {
+            const page = await got.get('https://bimasislam.kemenag.go.id', {
+                timeout: { request: 7000 },
+                retry: { limit: 2 }
+            });
+
+            const cookies = page.headers['set-cookie'] || [];
+            const cookiesStr = cookies.join("; ");
+            cookieCache = { cookies: cookiesStr, timestamp: now };
+            return cookiesStr;
+        } finally {
+            pendingCookieRequest = null;
         }
-    });
-    const cookies = page.headers['set-cookie'] || [];
-    return cookies.join("; ");
+    })()
+
+    return await pendingCookieRequest;
 }
 
 interface getScheduleParams {
