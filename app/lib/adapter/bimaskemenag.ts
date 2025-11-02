@@ -1,7 +1,7 @@
 import got from "got";
 import { JSDOM } from 'jsdom';
 
-var cookieCache: { cookies: string, timestamp: number } | null = null;
+let cookieCache: { cookies: string, timestamp: number } | null = null;
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 export const getCookies = async () => {
