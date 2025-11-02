@@ -132,3 +132,42 @@ export const getProvinces = async () => {
         dom.close();
     }
 }
+
+interface getCitiesParams {
+    province_id: string
+}
+
+export const getCities = async (params: getCitiesParams) => {
+    const cookies = await getCookies();
+
+    const page = await got.post('https://bimasislam.kemenag.go.id/web/ajax/getKabkoshalat', {
+        form: {
+            x: params.province_id
+        },
+        headers: {
+            'Cookie': cookies
+        },
+        timeout: { request: 5000 },
+        retry: { limit: 2 }
+    });
+
+    const dom = new JSDOM(page.body).window;
+    const citiesTag = dom.document.querySelectorAll('option');
+    const cities: Array<{
+        id: string,
+        name: string
+    }> = [];
+
+    for (let i = 0; i < citiesTag.length; i++) {
+        const element = citiesTag[i];
+
+        if (!element.value) continue;
+
+        cities.push({
+            id: element.value,
+            name: element.text
+        });
+    }
+
+    return cities;
+}
