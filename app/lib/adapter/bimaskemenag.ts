@@ -152,22 +152,27 @@ export const getCities = async (params: getCitiesParams) => {
     });
 
     const dom = new JSDOM(page.body).window;
-    const citiesTag = dom.document.querySelectorAll('option');
-    const cities: Array<{
-        id: string,
-        name: string
-    }> = [];
 
-    for (let i = 0; i < citiesTag.length; i++) {
-        const element = citiesTag[i];
+    try {
+        const citiesTag = dom.document.querySelectorAll('option');
+        const cities: Array<{
+            id: string,
+            name: string
+        }> = [];
 
-        if (!element.value) continue;
+        for (let i = 0; i < citiesTag.length; i++) {
+            const element = citiesTag[i];
 
-        cities.push({
-            id: element.value,
-            name: element.text
-        });
+            if (!element.value) continue;
+
+            cities.push({
+                id: element.value,
+                name: element.text
+            });
+        }
+
+        return cities;
+    } finally {
+        dom.close();
     }
-
-    return cities;
 }
