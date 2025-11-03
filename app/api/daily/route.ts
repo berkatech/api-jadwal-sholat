@@ -1,5 +1,5 @@
 import { getSchedules } from "@/app/lib/adapter/bimaskemenag";
-import { formatDate } from "@/app/lib/util/date";
+import { formatDate, validateDate } from "@/app/lib/util/date";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -15,6 +15,21 @@ export async function GET(request: NextRequest) {
         return Response.json({
             message: "error",
             error: "missing required parameters"
+        }, {
+            status: 400
+        });
+    }
+
+    // Validate date parameters
+    const dateNum = parseInt(date, 10);
+    const monthNum = parseInt(month, 10);
+    const yearNum = parseInt(year, 10);
+
+    const errorDate = validateDate(yearNum, monthNum, dateNum)
+    if (errorDate !== null) {
+        return Response.json({
+            message: "error",
+            error: errorDate.message
         }, {
             status: 400
         });
