@@ -1,28 +1,35 @@
+// convert to yyyy-mm-dd
+// note: call function validateDate first before use formatDate
 export const formatDate = (
     year: string,
     month: string,
     date: string
 ): string => {
-    if (month.length < 2) month = '0' + month
-    if (date.length < 2) date = '0' + date
+    const paddedMonth = month.padStart(2, "0");
+    const paddedDate = month.padStart(2, "0");
 
-    return `${year}-${month}-${date}`;
+    return `${year}-${paddedMonth}-${paddedDate}`;
 }
 
+// validate date
 export const validateDate = (
-    year: number,
-    month: number,
-    date: number
+    year: string,
+    month: string,
+    date: string
 ): Error | null => {
-    if (isNaN(year) || isNaN(month) || isNaN(date)) {
+    const dateNum = parseInt(date, 10);
+    const monthNum = parseInt(month, 10);
+    const yearNum = parseInt(year, 10);
+
+    if (isNaN(yearNum) || isNaN(monthNum) || isNaN(dateNum)) {
         return Error('date, month and year must be valid numbers');
     }
 
-    if (month < 1 || month > 12) {
+    if (monthNum < 1 || monthNum > 12) {
         return Error('month must be between 1 and 12');
     }
 
-    if (date < 1 || date > 31) {
+    if (dateNum < 1 || dateNum > 31) {
         return Error('date must be between 1 and 31');
     }
 

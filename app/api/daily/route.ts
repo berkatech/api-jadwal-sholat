@@ -21,11 +21,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Validate date parameters
-    const dateNum = parseInt(date, 10);
-    const monthNum = parseInt(month, 10);
-    const yearNum = parseInt(year, 10);
-
-    const errorDate = validateDate(yearNum, monthNum, dateNum)
+    const errorDate = validateDate(year, month, date)
     if (errorDate !== null) {
         return Response.json({
             message: "error",
