@@ -68,18 +68,25 @@ export async function GET(request: NextRequest) {
         const filterDate = formatDate(year, month, date);
 
         const scheduleItem = kemenagResponse.data[filterDate];
-        if (scheduleItem !== null) {
-            schedule = {
-                date: filterDate,
-                imsyak: scheduleItem.imsak,
-                shubuh: scheduleItem.subuh,
-                sunrise: scheduleItem.terbit,
-                dhuha: scheduleItem.dhuha,
-                dzuhur: scheduleItem.dzuhur,
-                ashr: scheduleItem.ashar,
-                maghrib: scheduleItem.maghrib,
-                isya: scheduleItem.isya,
-            }
+        if (!scheduleItem) {
+            return Response.json({
+                message: "error",
+                error: "schedule not found"
+            }, {
+                status: 404
+            });
+        }
+
+        schedule = {
+            date: filterDate,
+            imsyak: scheduleItem.imsak,
+            shubuh: scheduleItem.subuh,
+            sunrise: scheduleItem.terbit,
+            dhuha: scheduleItem.dhuha,
+            dzuhur: scheduleItem.dzuhur,
+            ashr: scheduleItem.ashar,
+            maghrib: scheduleItem.maghrib,
+            isya: scheduleItem.isya,
         }
 
         const resp = {
