@@ -6,7 +6,7 @@ export const formatDate = (
     date: string
 ): string => {
     const paddedMonth = month.padStart(2, "0");
-    const paddedDate = month.padStart(2, "0");
+    const paddedDate = date.padStart(2, "0");
 
     return `${year}-${paddedMonth}-${paddedDate}`;
 }
