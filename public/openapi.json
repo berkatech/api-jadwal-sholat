@@ -2,8 +2,8 @@
     "openapi": "3.0.3",
     "info": {
         "title": "Jadwal Sholat API",
-        "description": "API untuk mendapatkan daftar provinsi, kota, dan jadwal sholat bulanan berdasarkan lokasi.",
-        "version": "1.0.0"
+        "description": "API untuk mendapatkan daftar provinsi, kota, serta jadwal sholat harian dan bulanan berdasarkan lokasi.",
+        "version": "1.1.0"
     },
     "servers": [
         {
@@ -35,31 +35,6 @@
                                             }
                                         }
                                     }
-                                },
-                                "example": {
-                                    "message": "success",
-                                    "data": [
-                                        {
-                                            "id": "c4ca4238a0b923820dcc509a6f75849b",
-                                            "name": "ACEH"
-                                        },
-                                        {
-                                            "id": "c81e728d9d4c2f636f067f89cc14862c",
-                                            "name": "SUMATERA UTARA"
-                                        },
-                                        {
-                                            "id": "eccbc87e4b5ce2fe28308fd9f2a7baf3",
-                                            "name": "SUMATERA BARAT"
-                                        },
-                                        {
-                                            "id": "a87ff679a2f3e71d9181a67b7542122c",
-                                            "name": "RIAU"
-                                        },
-                                        {
-                                            "id": "e4da3b7fbbce2345d7772b0674a318d5",
-                                            "name": "KEPULAUAN RIAU"
-                                        }
-                                    ]
                                 }
                             }
                         }
@@ -102,27 +77,6 @@
                                             }
                                         }
                                     }
-                                },
-                                "example": {
-                                    "message": "success",
-                                    "data": [
-                                        {
-                                            "id": "0777d5c17d4066b82ab86dff8a46af6f",
-                                            "name": "KAB. BANDUNG"
-                                        },
-                                        {
-                                            "id": "fa7cdfad1a5aaf8370ebeda47a1ff1c3",
-                                            "name": "KAB. BANDUNG BARAT"
-                                        },
-                                        {
-                                            "id": "9766527f2b5d3e95d4a733fcfb77bd7e",
-                                            "name": "KAB. BEKASI"
-                                        },
-                                        {
-                                            "id": "7e7757b1e12abcb736ab9a754ffb617a",
-                                            "name": "KAB. BOGOR"
-                                        }
-                                    ]
                                 }
                             }
                         }
@@ -139,46 +93,42 @@
                         "name": "province_id",
                         "in": "query",
                         "required": true,
-                        "description": "ID provinsi.",
                         "schema": {
-                            "type": "string",
-                            "example": "c20ad4d76fe97759aa27a0c99bff6710"
-                        }
+                            "type": "string"
+                        },
+                        "description": "ID provinsi."
                     },
                     {
                         "name": "city_id",
                         "in": "query",
                         "required": true,
-                        "description": "ID kota.",
                         "schema": {
-                            "type": "string",
-                            "example": "fc221309746013ac554571fbd180e1c8"
-                        }
+                            "type": "string"
+                        },
+                        "description": "ID kota."
                     },
                     {
                         "name": "month",
                         "in": "query",
                         "required": true,
-                        "description": "Bulan (1-12).",
                         "schema": {
-                            "type": "integer",
-                            "example": 10
-                        }
+                            "type": "integer"
+                        },
+                        "description": "Bulan (1-12)."
                     },
                     {
                         "name": "year",
                         "in": "query",
                         "required": true,
-                        "description": "Tahun (misalnya 2025).",
                         "schema": {
-                            "type": "integer",
-                            "example": 2025
-                        }
+                            "type": "integer"
+                        },
+                        "description": "Tahun (misalnya 2025)."
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Jadwal sholat berhasil diambil.",
+                        "description": "Jadwal sholat bulanan berhasil diambil.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -208,47 +158,115 @@
                                             }
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/daily": {
+            "get": {
+                "summary": "Jadwal sholat harian",
+                "description": "Mendapatkan jadwal sholat untuk satu hari tertentu berdasarkan provinsi, kota, tanggal, bulan, dan tahun.",
+                "parameters": [
+                    {
+                        "name": "province_id",
+                        "in": "query",
+                        "required": true,
+                        "description": "ID provinsi.",
+                        "schema": {
+                            "type": "string",
+                            "example": "c20ad4d76fe97759aa27a0c99bff6710"
+                        }
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "required": true,
+                        "description": "ID kota.",
+                        "schema": {
+                            "type": "string",
+                            "example": "fc221309746013ac554571fbd180e1c8"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": true,
+                        "description": "Tanggal (1-31).",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "month",
+                        "in": "query",
+                        "required": true,
+                        "description": "Bulan (1-12).",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "required": true,
+                        "description": "Tahun (misalnya 2025).",
+                        "schema": {
+                            "type": "integer",
+                            "example": 2025
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Jadwal sholat harian berhasil diambil.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "province": {
+                                                    "type": "string",
+                                                    "example": "JAWA BARAT"
+                                                },
+                                                "city": {
+                                                    "type": "string",
+                                                    "example": "KOTA BANDUNG"
+                                                },
+                                                "schedule": {
+                                                    "$ref": "#/components/schemas/Schedule"
+                                                }
+                                            }
+                                        }
+                                    }
                                 },
                                 "example": {
                                     "message": "success",
                                     "data": {
                                         "province": "JAWA BARAT",
                                         "city": "KOTA BANDUNG",
-                                        "schedules": [
-                                            {
-                                                "date": "2025-10-01",
-                                                "imsyak": "04:09",
-                                                "shubuh": "04:19",
-                                                "sunrise": "05:27",
-                                                "dhuha": "05:58",
-                                                "dzuhur": "11:43",
-                                                "ashr": "14:49",
-                                                "maghrib": "17:51",
-                                                "isya": "18:56"
-                                            },
-                                            {
-                                                "date": "2025-10-02",
-                                                "imsyak": "04:09",
-                                                "shubuh": "04:19",
-                                                "sunrise": "05:27",
-                                                "dhuha": "05:58",
-                                                "dzuhur": "11:42",
-                                                "ashr": "14:48",
-                                                "maghrib": "17:51",
-                                                "isya": "18:56"
-                                            },
-                                            {
-                                                "date": "2025-10-03",
-                                                "imsyak": "04:08",
-                                                "shubuh": "04:18",
-                                                "sunrise": "05:26",
-                                                "dhuha": "05:57",
-                                                "dzuhur": "11:42",
-                                                "ashr": "14:47",
-                                                "maghrib": "17:51",
-                                                "isya": "18:56"
-                                            }
-                                        ]
+                                        "schedule": {
+                                            "date": "2025-10-01",
+                                            "imsyak": "04:09",
+                                            "shubuh": "04:19",
+                                            "sunrise": "05:27",
+                                            "dhuha": "05:58",
+                                            "dzuhur": "11:43",
+                                            "ashr": "14:49",
+                                            "maghrib": "17:51",
+                                            "isya": "18:56"
+                                        }
                                     }
                                 }
                             }
@@ -291,7 +309,8 @@
                 "properties": {
                     "date": {
                         "type": "string",
-                        "format": "date"
+                        "format": "date",
+                        "example": "2025-10-01"
                     },
                     "imsyak": {
                         "type": "string",
