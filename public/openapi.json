@@ -142,10 +142,12 @@
                                             "type": "object",
                                             "properties": {
                                                 "province": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "JAWA BARAT"
                                                 },
                                                 "city": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "KOTA BANDUNG"
                                                 },
                                                 "schedules": {
                                                     "type": "array",
