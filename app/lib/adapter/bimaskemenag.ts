@@ -1,5 +1,5 @@
 import got from "got";
-import { JSDOM } from 'jsdom';
+const { JSDOM } = require('jsdom');
 
 let cookieCache: { cookies: string, timestamp: number } | null = null;
 let pendingCookieRequest: Promise<string> | null = null;
